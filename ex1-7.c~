@@ -1,7 +1,0 @@
-#include <stdio.h>
-
-int main(void)
-{
-	printf("%i", EOF); // prints -1
-	printf("%c", EOF); // unknown (not in char set)
-}
