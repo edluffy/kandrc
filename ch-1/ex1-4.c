@@ -3,6 +3,7 @@
 #define LOW 0
 #define STEP 20
 
+/* my temp converter */
 int main(void)
 {
 	printf("Fahr Celsius\n");

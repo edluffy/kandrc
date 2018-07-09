@@ -2,6 +2,7 @@
 #define UPPER 200
 #define LOWER 0
 #define STEP 20
+
 /* temp conversion rewritten as function */
 float ftoc(float fahr);
 int main(void)
@@ -11,6 +12,7 @@ int main(void)
 		printf("%3.0f\t%3.0f\n", fahr, ftoc(fahr));
 }
 
+/* convert temp in fahr to cels */
 float ftoc(float fahr)
 {
 	return (fahr - 32.0) * (5.0/9.0);	

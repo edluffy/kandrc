@@ -1,5 +1,6 @@
 #include <stdio.h>
 #define MAXCHAR 128
+
 /* print histogram of char freq. from input */
 int main(void)
 {

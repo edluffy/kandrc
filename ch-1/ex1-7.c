@@ -1,5 +1,5 @@
 #include <stdio.h>
-
+/* prints value of EOF */
 int main(void)
 {
 	printf("%i\n", EOF); // prints -1

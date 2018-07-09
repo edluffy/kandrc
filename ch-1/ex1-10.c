@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-// replace tabs, backspaces, backslashes with \t, \b, \\;
+/* replace tabs, backspaces, backslashes with \t, \b, \\. */
 int main(void)
 {
 	int c;

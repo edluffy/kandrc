@@ -1,5 +1,5 @@
 #include <stdio.h>
-
+/* temperature converter */
 int main(void)
 {
 	float fahr, celsius;

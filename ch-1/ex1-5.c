@@ -3,6 +3,7 @@
 #define LOW 0
 #define STEP 20
 
+/* reverse order temp converter */
 int main(void)
 {
 	printf("Fahr Celsius\n");

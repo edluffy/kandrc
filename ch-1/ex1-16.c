@@ -1,6 +1,7 @@
 #include <stdio.h>
 #define LIM 999
 int gline(char s[], int lim);
+
 /* print all input lines > 80 chars */
 int main(void)
 {
@@ -12,6 +13,7 @@ int main(void)
 	}
 }
 
+/* puts line of input up to length lim into string s */
 int gline(char s[], int lim)
 {
 	int i, c;

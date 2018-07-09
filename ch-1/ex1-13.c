@@ -1,5 +1,6 @@
 #include <stdio.h>
 #define LIM 999
+
 /* print histogram of word length from input */
 int main(void)
 {
