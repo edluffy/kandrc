@@ -1,9 +1,18 @@
 #include <stdio.h>
-#include <math.h>
+#include <limits.h>
 /* program to determine ranges of:
  * char, short, int and long (unsigned and signed)
  * float, double */
 int main(void)
-{
-	printf("%.0f, %.0f", pow(2, sizeof(char)*7), -pow(2, sizeof(char)*7) + 1);
-}
+{	
+	printf("\nSigned:\n");
+	printf("%i", CHAR_MAX, CHAR_MIN);
+	printf("%i", INT_MAX, SHORT_MIN);
+	printf("%i", CHAR_MAX, CHAR_MIN);
+	printf("%i", CHAR_MAX, CHAR_MIN);
+	
+	printf("\nUnsigned:\n");
+	printf("%i", CHAR_MAX, CHAR_MIN);
+	printf("%i", CHAR_MAX, CHAR_MIN);
+	printf("%i", CHAR_MAX, CHAR_MIN);
+	printf("%i", CHAR_MAX, CHAR_MIN);
