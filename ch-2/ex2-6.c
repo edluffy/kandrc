@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <math.h>
 #define LIM 999
 /* write a function setbits(x, p, n, y) */
 
