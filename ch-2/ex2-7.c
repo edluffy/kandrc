@@ -1,5 +1,4 @@
 #include <stdio.h>
-#define LIM 999
 /* write a functioon invert(x, p, n) */
 
 int invert(int x, int p, int n);
