@@ -28,7 +28,6 @@ void itoa( int n, char s[])
 
 	if(sign < 0) 
 		s[i++] = '-';
-
 	s[i] = '\0';
 	strrev(s);
 }
