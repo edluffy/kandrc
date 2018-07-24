@@ -89,10 +89,10 @@ int getop(char s[])
 	s[1] = '\0';
 	if(!isdigit(c) && c != '.')
 		return c; // not a number
+
 	i = 0;
 	if(isdigit(c)) // collect integer part
-		while(isdigit(s[++i] = c = getch()))
-			;
+		while(isdigit(s[++i] = c = getch()));
 	if(c == '.') // collect fraction part
 		while(isdigit(s[++i] = c = getch()))
 			;
