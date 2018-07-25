@@ -4,11 +4,11 @@ void push(double f);
 double pop(void);
 int main(void)
 {
-	int c, type;
-	while((type = getop(c)) != EOF){
+	int s, type;
+	while((type = getop(s)) != EOF){
 		switch(type){
 			case NUMBER:
-				push(atof(c));
+				push(atof(s));
 			case '+':
 				push(pop() + pop());
 			break;
@@ -42,4 +42,15 @@ double pop(void)
 		return stack[--spos];
 	else
 		printf("error: can't pop empty stack");
+}
+
+#include <ctype.h>
+int getop(char s[])
+{
+	while((s[0] = c = getch()) == ' ' || c == '\t')
+		; // skip all blank chars
+	s[1] = '\0';
+
+	if(!isdigit(c) && c != '.')
+		return c; /
 }
