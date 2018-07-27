@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #define MAXOP 100
 #define NUMBER '0'
 #define COMMAND '1'
+#define PI 3.14159265359
 int getop(char s[]);
 void push(double f);
 double pop(void);
@@ -35,6 +37,19 @@ int main(void)
 				}
 				if(!strcmp(s, "clear"))
 					sclear();
+				
+				// math functions
+				if(!strcmp(s, "sin")){
+					op1 = PI/180;
+					push(sin(op1*pop()));
+				}
+				if(!strcmp(s, "exp"))
+					push(exp(pop()));
+				if(!strcmp(s, "pow")){
+					op2 = pop();
+					push(pow(pop(), op2));
+				}
+				
 				break;
 			case NUMBER:
 				push(atof(s));
