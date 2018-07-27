@@ -1,17 +1,41 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #define MAXOP 100
 #define NUMBER '0'
+#define COMMAND '1'
 int getop(char s[]);
 void push(double f);
 double pop(void);
+void sclear(void);
 int main(void)
 {
 	int type;
-	double op2;
+	double op2, op1;
 	char s[MAXOP];
+
 	while((type = getop(s)) != EOF){
 		switch(type){
+			case COMMAND:
+				if(!strcmp(s, "top")){
+					op1 = pop();
+					printf("\t%.8g\n", op1);
+					push(op1);
+				}
+				if(!strcmp(s, "dupe")){
+					op1 = pop();
+					push(op2);
+					push(op2);
+				}
+				if(!strcmp(s, "swap")){
+					op2 = pop();
+					op1 = pop();
+					push(op2);
+					push(op1);
+				}
+				if(!strcmp(s, "clear"))
+					sclear();
+				break;
 			case NUMBER:
 				push(atof(s));
 				break;
@@ -65,10 +89,16 @@ double pop(void)
 {
 	if(spos > 0)
 		return stack[--spos];
-	else{
+	else
 		printf("error: can't pop empty stack\n");
-		return 0.0;
-	}
+}
+/* clear stack and start from bottom */
+void sclear(void)
+{
+	int i;
+	for(i = 0; i < spos; i++)
+		stack[i] = 0;
+	spos = 0;
 }
 
 
@@ -84,7 +114,7 @@ int getop(char s[])
 	s[1] = '\0';
 
 	i = 0;
-	if(!isdigit(c) && c != '.' && c != '-')
+	if(!isdigit(c) && !isalpha(c) && c != '.' && c != '-')
 		return c; // not a number
 	
 	if(c == '-'){ // sign handling
@@ -96,15 +126,22 @@ int getop(char s[])
 	}
 	
 	// collect integer and fractional parts
-	if(isdigit(c))
+	if(isdigit(c)){
 		while(isdigit(s[++i] = c = getch()));
-	if(c == '.')
-		while(isdigit(s[++i] = c = getch()));
-	s[i] = '\0';
+		if(c == '.')
+			while(isdigit(s[++i] = c = getch()));
+		s[i] = '\0';
+		return NUMBER;
+	
+	// collect alphabet characters
+	}else if(isalpha(c)){
+		while(isalpha(s[++i] = c = getchar()));
+		s[i] = '\0';
+		return COMMAND;
+	}
 
 	if(c != EOF)
-		ungetch(c); // roll back - encountered char we are not ready for
-	return NUMBER;
+		ungetch(c); // roll back - encountered char unprepared for
 }
 
 
