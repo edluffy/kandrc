@@ -3,8 +3,7 @@
 #define MAXOP 100 // max size of operand or operator
 #define NUMBER '0' // signal that a number was found
 
-/* extend the ch-4 calculator by adding the modulus operator
- * and provisions for negative numbers */
+/* extend the ch-4 calculator by adding variables */
 
 int getop(char []);
 void push(double);
@@ -13,7 +12,7 @@ int main(void)
 {
 	int type;
 	double op2;
-	char s[MAXOP];
+	char s[MAXOP], var[MAXOP];
 
 	while ((type = getop(s)) != EOF){
 		switch (type){
@@ -45,7 +44,10 @@ int main(void)
 				printf("\t%.8g\n", pop());
 				break;
 			default:
-				printf("error: unknown command %s\n", s);
+				if(type >= 'a' && type <= 'z'){
+					var[type - 'a'] = pop();
+				}else
+					printf("error: unknown command %s\n", s);
 				break;
 		}
 	}
@@ -83,23 +85,26 @@ void ungetch(int);
 /* get next operator or numeric operand */
 int getop(char s[])
 {
-	int i, c;
-	while((s[0] = c = getch()) == ' ' || c == '\t')
-		;
+	int i, c, type;
+	type = -1;
+
+	while((s[0] = c = getch()) == ' ' || c == '\t');
 	s[1] = '\0';
+
 	if(!isdigit(c) && c != '.')
 		return c; // not a number
 
 	i = 0;
-	if(isdigit(c)) // collect integer part
+	if(isdigit(c)){ // collect integer part
 		while(isdigit(s[++i] = c = getch()));
-	if(c == '.') // collect fraction part
-		while(isdigit(s[++i] = c = getch()))
-			;
+		if(c == '.') // collect fraction part
+			while(isdigit(s[++i] = c = getch()));
+		type = NUMBER;
+	}
 	s[i] = '\0';
 	if(c != EOF)
 		ungetch(c);
-	return NUMBER;
+	return type;
 }
 
 #define BUFSIZE 100
