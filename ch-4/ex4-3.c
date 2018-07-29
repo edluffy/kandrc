@@ -2,7 +2,7 @@
 #include <stdlib.h> 
 #define MAXOP 100 // max size of operand or operator
 #define NUMBER '0' // signal that a number was found
-
+#define ASIZE 26 // size of the alphabet
 /* extend the ch-4 calculator by adding variables */
 
 int getop(char []);
@@ -10,9 +10,12 @@ void push(double);
 double pop(void);
 int main(void)
 {
-	int type;
+	int i, type;
 	double op2;
-	char s[MAXOP], var[MAXOP];
+	char s[MAXOP], var[ASIZE];
+
+	for(i = 0; i < ASIZE; i++)
+		var[i] = 0; // clear variables
 
 	while ((type = getop(s)) != EOF){
 		switch (type){
@@ -36,16 +39,15 @@ int main(void)
 				else
 					printf("error: zero divisor\n");
 				break;
-			case '%':
-				op2 = pop();
-				push((int) pop() % (int) op2);
-				break;
 			case '\n':
 				printf("\t%.8g\n", pop());
 				break;
 			default:
 				if(type >= 'a' && type <= 'z'){
-					var[type - 'a'] = pop();
+					if(var[type - 'a'] > 0)
+						push(var[type - 'a']);
+					else
+						push(var[type - 'a'] = pop());
 				}else
 					printf("error: unknown command %s\n", s);
 				break;
