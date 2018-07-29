@@ -12,7 +12,8 @@ int main(void)
 {
 	int i, type;
 	double op2;
-	char s[MAXOP], var[ASIZE];
+	char s[MAXOP];
+	double var[ASIZE];
 
 	for(i = 0; i < ASIZE; i++)
 		var[i] = 0; // clear variables
@@ -40,7 +41,7 @@ int main(void)
 					printf("error: zero divisor\n");
 				break;
 			case '\n':
-				printf("\t%.8g\n", pop());
+				printf("\t%.8g\n", var['z' - 'a'] = pop());
 				break;
 			default:
 				if(type >= 'a' && type <= 'z'){
