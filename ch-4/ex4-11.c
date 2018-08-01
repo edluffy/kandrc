@@ -1,4 +1,4 @@
-/* modify getop so that it does not need to use ungetch */
+/* modify getop so that it does not need to use ungetch - unfinished */
 #include <stdio.h>
 #include <stdlib.h>
 
