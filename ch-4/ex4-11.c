@@ -77,7 +77,7 @@ int getch(void);
 void ungetch(int);
 
 /* get next operator or numeric operand */
-static int getop(char s[])
+int getop(char s[])
 {
 	int i, c;
 	while((s[0] = c = getch()) == ' ' || c  == '\t');
