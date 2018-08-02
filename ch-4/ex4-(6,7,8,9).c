@@ -3,7 +3,10 @@
 #define MAXOP 100 // max size of operand or operator
 #define NUMBER '0' // signal that a number was found
 #define ASIZE 26 // size of the alphabet
-/* extend the ch-4 calculator by adding variables */
+/* 4-6 extend the calculator by adding variables
+ * 4-7 write a routine ungets(s)
+ * 4-8 modify getch and ungetch for only a single char of pushback 
+ * 4-9 handle pushed back EOF correctly */
 
 int getop(char []);
 void push(double);

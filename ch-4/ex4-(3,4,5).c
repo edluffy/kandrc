@@ -6,6 +6,10 @@
 #define NUMBER '0'
 #define COMMAND '1'
 #define PI 3.14159265359
+/* 4-3 add the modulus operator and provisions for negative numbers 
+ * 4-4 add commands for 'top', 'dupe', 'swap' and 'clear' 
+ * 4-5 add math.h functions like sin, exp and pow */
+
 int getop(char s[]);
 void push(double f);
 double pop(void);
