@@ -15,6 +15,7 @@ int main(void)
 }
 
 int pos = 0;
+/* recursively convert int to ascii */
 void ritoa(int n, char s[])
 {
 	if(n < 0){
