@@ -15,6 +15,7 @@ int main(void)
 	recrev(str);
 	printf("\t%s", str);
 }
+
 /* reverse string s in place */
 int pos = 0;
 void recrev(char s[])
