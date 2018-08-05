@@ -20,7 +20,8 @@ int main(void)
 int pos = 0;
 void recrev(char s[])
 {
-	if(s[pos++] != '\0')
+	int c;
+	if(s[c = pos++] != '\0')
 		recrev(s);
-	putchar(s[pos]);	
+	printf("%c", s[c]);
 }
