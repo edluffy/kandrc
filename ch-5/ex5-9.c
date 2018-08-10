@@ -4,7 +4,7 @@
 int day_of_year(int year, int month, int day);
 void month_day(int year, int yearday, int *pmonth, int *pday);
 
-/* add error checking */
+/* rewrite ex5-8 with pointers instead of indexing */
 int main(void)
 {
 	int day, month, year, yearday;
@@ -22,7 +22,7 @@ int main(void)
 	printf("Day: %i, Month: %i", day, month);
 }
 
-static char daytab[13] = {
+static char daytab[][13] = {
 	{0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
 	{0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
 };
@@ -33,13 +33,13 @@ int day_of_year(int year, int month, int day)
 	leap = year%4 == 0 && year%100 != 0 || year%400 == 0;
 
 	// error checking
-	if(day > daytab[leap][month] || month > 12){
+	if(day > *(*(daytab + leap) + month) || month > 12){
 		printf("error: invalid day or month\n");
 		return -1;
 	}
 
 	for(i = 1; i < month; i++)
-		day += daytab[leap][i];
+		day += *(*(daytab + leap) + i);
 	return day;
 }
 
@@ -53,8 +53,8 @@ void month_day(int year, int yearday, int *pmonth, int *pday)
 		printf("error: invalid day\n");
 		return;
 	}	
-	for(i = 1; yearday > daytab[leap][i]; i++)
-		yearday -= daytab[leap][i];
+	for(i = 1; yearday > *(*(daytab + leap) + i); i++)
+		yearday -= *(*(daytab + leap) + i);
 	*pmonth = i;
 	*pday = yearday;
 }
