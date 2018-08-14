@@ -1,48 +1,55 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #define DEFAULT 10
-#define MAXNL 999 // max number of lines
-#define MAXLL 999 // max line length
-int tgettext(char **text);
+#define MAXNL 99 // maximum number of lines
+#define MAXLL 999 // maximum line length
+
+char *alloc(int n);
+int readline(char *pl, int maxlen);
 
 /* write the program tail that prints the last n lines of input */
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
 	int n = DEFAULT;
-	if(argc > 1 && **++argv == '-')
-		n = atoi(*argv + 1);
-	
-	int nl;
+	if(argc > 1 && *argv[1] == '-')
+		n = atoi(argv[1] + 1);
+
 	char *textp[MAXNL];
-
-	tgettext(textp);
-	printf("%s\n", *textp);
-
-
-}
-
-int tgetline(char *line);
-
-/* returns array of lines and their number */
-int tgettext(char *text[])
-{
-	int n;
-	for(n = 0; tgetline(text[n]) > 0 && n < MAXNL; n++)
-		;
-	return n;
-	
-}
-
-/* returns line of input and its length */
-int tgetline(char *line)
-{
-	int c, l;
-	for(l = 0; l < MAXLL-1 && (c = getchar()) != EOF; l++){
-	//	if(c == '\n') break;
-		*line++ = c;
+	int nl;
+	for(nl = 0; readline(textp[nl], MAXLL) > 0 && nl < MAXNL; nl++){
 	}
-	printf("got here");
-	*line = '\0';
-	printf("got here");
-	return l;
+	printf("%s\n", textp[nl-2]);
+}
+
+
+#include <string.h>
+/* stores input line and returns length, -1 if no line to read or storage fails */
+int readline(char *pl, int maxlen)
+{
+	int c, len;
+	char line[maxlen];
+	for(len = 0; (c = getchar()) != EOF && c != '\n' && len < maxlen-1; len++)
+		line[len] = c;
+	line[len] = '\0';
+	
+	if(len > 0 && (pl = alloc(len)) != NULL){
+		strcpy(pl, line);
+		return len;
+	}else
+		return -1;
+}
+
+#define ALLOCSIZE 10000
+
+static char allocbuf[ALLOCSIZE];
+static char *allocp = allocbuf;
+
+char *alloc(int n)
+{
+	if(allocbuf + ALLOCSIZE - allocp >= n){
+		allocp += n;
+		return allocp - n;
+	} else
+		return 0;
 }
