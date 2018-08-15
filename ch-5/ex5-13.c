@@ -5,8 +5,8 @@
 #define MAXNL 99 // maximum number of lines
 #define MAXLL 999 // maximum line length
 
-char *alloc(int n);
-int readline(char *pl, int maxlen);
+int pgetlar(char *plar[], int maxn, int maxl);
+int pgetlin(char *plin, int maxl);
 
 /* write the program tail that prints the last n lines of input */
 int main(int argc, char *argv[])
@@ -15,33 +15,53 @@ int main(int argc, char *argv[])
 	if(argc > 1 && *argv[1] == '-')
 		n = atoi(argv[1] + 1);
 
-	char *textp[MAXNL];
-	int nl;
-	for(nl = 0; readline(textp[nl], MAXLL) > 0 && nl < MAXNL; nl++){
-	}
-	printf("%s\n", textp[nl-2]);
+	int nlines, i;
+	char *text[MAXLL];
+	nlines = pgetlar(text, MAXNL, MAXLL);
+
+	printf("Printing last %i lines\n", n);	
+	i = (n < nlines) ? nlines-n : 0;
+	while(i < nlines)	
+		printf("%s\n", text[i++]);
 }
 
 
 #include <string.h>
-/* stores input line and returns length, -1 if no line to read or storage fails */
-int readline(char *pl, int maxlen)
+char *alloc(int n);
+
+/* returns array of lines and their number */
+int pgetlar(char *plarr[], int maxn, int maxl)
+{
+	int space, nl;
+	char line[maxl], *p;
+
+	nl = 0;
+	while((space = pgetlin(line, maxl)) > 0 && nl < maxn){
+		if((p = alloc(space)) != NULL){
+			strcpy(p, line);
+			plarr[nl++] = p;
+		} else
+			break;
+	}
+
+	return (nl < 1) ? -1 : nl;
+
+}
+
+/* returns line and its length */
+int pgetlin(char lin[], int maxl)
 {
 	int c, len;
-	char line[maxlen];
-	for(len = 0; (c = getchar()) != EOF && c != '\n' && len < maxlen-1; len++)
-		line[len] = c;
-	line[len] = '\0';
-	
-	if(len > 0 && (pl = alloc(len)) != NULL){
-		strcpy(pl, line);
-		return len;
-	}else
-		return -1;
+
+	len = 0;
+	while((c = getchar()) != EOF && c != '\n' && len < maxl-1)
+		lin[len++] = c;
+	lin[len] = '\0';
+
+	return (len < 1) ? -1 : len+1;
 }
 
 #define ALLOCSIZE 10000
-
 static char allocbuf[ALLOCSIZE];
 static char *allocp = allocbuf;
 
