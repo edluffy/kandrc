@@ -5,13 +5,13 @@
 #define MAXLL 999 // maximum line length
 char *lineptr[MAXNL]; // pointers to lines
 
-int pgetlar(char *lar[], int maxn, int maxl);
-int pgetlin(char *plin, int maxl);
+int sreadlines(char *lar[], int maxn, int maxl);
+int sgetline(char *plin, int maxl);
 
 
-void myqsort(char *lineptr[], int left, int right,
+void myqsort(void *lineptr[], int left, int right,
 		int (*comp)(void *, void *));
-int numcmp(char *, char *);
+int numcmp(const char *, const char *);
 
 int main(int argc, char *argv[])
 {
@@ -20,9 +20,11 @@ int main(int argc, char *argv[])
 
 	if(argc > 1 && strcmp(argv[1], "-n") == 0)
 		numeric = 1;
-	if((nlines = pgetlar(lineptr, MAXNL, MAXLL)) >= 0){
+	if((nlines = sreadlines(lineptr, MAXNL, MAXLL)) >= 0){
 		myqsort((void **) lineptr, 0, nlines-1,
 				(int (*)(void*,void*))(numeric ? numcmp : strcmp));
+		for(int i = 0; nlines--; i++)
+			printf("%s\n", lineptr[i]);
 		return 0;
 	} else {
 		printf("Input too large to sort\n");
@@ -45,13 +47,13 @@ void myqsort(void *v[], int left, int right,
 			swap(v, ++last, i);
 	}
 	swap(v, left, last);
-	qsort(v, left, last-1, comp);
-	qsort(v, last+1, right, comp);
+	myqsort(v, left, last-1, comp);
+	myqsort(v, last+1, right, comp);
 }
 
 #include <stdlib.h>
 
-int numcmp(char *s1, char *s2)
+int numcmp(const char *s1, const char *s2)
 {
 	double v1, v2;
 	v1 = atof(s1);
@@ -72,3 +74,46 @@ void swap(void *v[], int i, int j)
 	v[j] = temp;
 }
 
+#include <string.h>
+char *salloc(int n);
+
+int sreadlines(char *plar[], int maxn, int maxl)
+{
+	int space, nl;
+	char line[maxl], *p;
+
+	nl = 0;
+	while((space = sgetline(line, maxl)) > 0 && nl < maxn){
+		if((p = salloc(space)) != NULL){
+			strcpy(p, line);
+			plar[nl++] = p;
+		} else
+			break;
+	}
+	return (nl < 1) ? -1 : nl;
+}
+
+int sgetline(char *lin, int maxl)
+{
+	int c, len;
+
+	len = 0;
+	while((c = getchar()) != EOF && c != '\n' && len < maxl-1)
+		lin[len++] = c;
+	lin[len] = '\0';
+	
+	return (len < 1) ?  -1 : len+1;
+}
+
+#define ALLOCSIZE 10000
+static char allocbuf[ALLOCSIZE];
+static char *allocp = allocbuf;
+
+char *salloc(int n)
+{
+	if(allocbuf + ALLOCSIZE - allocp >= n){
+		allocp += n;
+		return allocp - n;
+	} else
+		return 0;
+}
