@@ -5,6 +5,7 @@
 #define MAXLL 999 // maximum line length
 char *lineptr[MAXNL]; // pointers to lines
 
+void writelines(char *lar[], int nl, int order);
 int sreadlines(char *lar[], int maxn, int maxl);
 int sgetline(char *plin, int maxl);
 
@@ -15,16 +16,21 @@ int numcmp(const char *, const char *);
 
 int main(int argc, char *argv[])
 {
-	int nlines;
-	int numeric = 0;
+	int nlines, numeric, reverse;
+	numeric = reverse = 0;
+	int nflag = argc;
 
-	if(argc > 1 && strcmp(argv[1], "-n") == 0)
-		numeric = 1;
+	while(--nflag){
+		if(strcmp(argv[nflag], "-n") == 0)
+			numeric = 1;
+		else if(strcmp(argv[nflag], "-r") == 0)
+			reverse = 1;
+	}	
+
 	if((nlines = sreadlines(lineptr, MAXNL, MAXLL)) >= 0){
 		myqsort((void **) lineptr, 0, nlines-1,
 				(int (*)(void*,void*))(numeric ? numcmp : strcmp));
-		for(int i = 0; nlines--; i++)
-			printf("%s\n", lineptr[i]);
+		writelines(lineptr, nlines, reverse);
 		return 0;
 	} else {
 		printf("Input too large to sort\n");
@@ -74,7 +80,12 @@ void swap(void *v[], int i, int j)
 	v[j] = temp;
 }
 
-#include <string.h>
+void writelines(char *plar[], int nl, int order)
+{
+	for(int i = 0; nl--; i++)
+		printf("%s\n", plar[order ? nl : i]);
+}
+
 char *salloc(int n);
 
 int sreadlines(char *plar[], int maxn, int maxl)
