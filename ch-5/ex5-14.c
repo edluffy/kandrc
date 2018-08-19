@@ -12,7 +12,8 @@ int sgetline(char *plin, int maxl);
 
 void myqsort(void *lineptr[], int left, int right,
 		int (*comp)(void *, void *));
-int numcmp(const char *, const char *);
+int numcmp(char *, char *);
+int mystrcmp(char *, char *);
 
 static int numflag, revflag, foldflag;
 
@@ -34,7 +35,7 @@ int main(int argc, char *argv[])
 
 	if((nlines = sreadlines(lineptr, MAXNL, MAXLL)) >= 0){
 		myqsort((void **) lineptr, 0, nlines-1,
-				(int (*)(void*,void*))(numflag ? numcmp : strcmp));
+				(int (*)(void*,void*))(numflag ? numcmp : mystrcmp));
 		writelines(lineptr, nlines);
 		return 0;
 	} else {
@@ -64,7 +65,7 @@ void myqsort(void *v[], int left, int right,
 
 #include <stdlib.h>
 
-int numcmp(const char *s1, const char *s2)
+int numcmp(char *s1, char *s2)
 {
 	double v1, v2;
 	v1 = atof(s1);
@@ -75,6 +76,41 @@ int numcmp(const char *s1, const char *s2)
 		return 1;
 	else
 		return 0;
+}
+
+int mystrcmp(char *s1, char *s2)
+{
+	int i;
+	char buf1[MAXLL];
+	char buf2[MAXLL];
+
+	strcpy(buf1, s1);
+	strcpy(buf2, s2);
+
+	if(foldflag){
+		for(i = 0; buf1[i] != '\0'; i++){
+			if(buf1[i] >= 'A' && buf1[i] <= 'Z')
+				buf1[i] += ('a' - 'A');
+		}
+		for(i = 0; buf2[i] != '\0'; i++){
+			if(buf2[i] >= 'A' && buf2[i] <= 'Z')
+				buf2[i] += ('a' - 'A');
+		}
+	}
+
+	char *p1 = buf1;
+	char *p2 = buf2;
+	while(*p1 != '\0'){
+		if(*p2 == '\0') return 1;
+		if(*p2 > *p1) return -1;
+		if(*p1 > *p2) return 1;
+
+		p1++;
+		p2++;
+	}
+	if(*p2 != '\0') return -1;
+
+	return 0;
 }
 
 void swap(void *v[], int i, int j)
@@ -115,11 +151,8 @@ int sgetline(char *lin, int maxl)
 	int c, len;
 
 	len = 0;
-	while((c = getchar()) != EOF && c != '\n' && len < maxl-1){
-		if(foldflag)
-			if(c >= 'A' && c <= 'Z') c += 'a'-'A';
+	while((c = getchar()) != EOF && c != '\n' && len < maxl-1)
 		lin[len++] = c;
-	}
 	lin[len] = '\0';
 	
 	return (len < 1) ?  -1 : len+1;
