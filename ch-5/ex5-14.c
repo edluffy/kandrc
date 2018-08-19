@@ -15,17 +15,37 @@ void myqsort(void *lineptr[], int left, int right,
 int numcmp(char *, char *);
 int mystrcmp(char *, char *);
 
-static int numflag, revflag, foldflag, dirflag;
+static int pos, dur, numflag, revflag, foldflag, dirflag;
 
+#include <stdlib.h>
+#include <ctype.h>
 int main(int argc, char *argv[])
 {
-	numflag = revflag = foldflag = dirflag = 0;
+	pos = numflag = revflag = foldflag = dirflag = 0;
+	dur = 0;
 
 	int nlines;
 	int nflag = argc;
+	char bufn[999];
+	int i = 0;
 
 	while(--nflag){
-		if(strcmp(argv[nflag], "-n") == 0)
+		if(isdigit(*argv[nflag])){
+			//printf("%i", *argv[nflag] - '0');
+			while(isdigit(*argv[nflag]++))
+				bufn[i++] = *argv[nflag] - '0';
+			bufn[i] = '\0';
+			pos = atoi(bufn);
+			if(*argv[nflag] == '-')
+				argv[nflag]++;
+			i = 0;
+			while(isdigit(*argv[nflag]++))
+				bufn[i++] = *argv[nflag] - '0';
+			bufn[i] = '\0';
+			dur = atoi(bufn);
+			printf("%i", pos);			
+		}
+		else if(strcmp(argv[nflag], "-n") == 0)
 			numflag = 1;
 		else if(strcmp(argv[nflag], "-r") == 0)
 			revflag = 1;
@@ -36,7 +56,7 @@ int main(int argc, char *argv[])
 	}	
 
 	if((nlines = sreadlines(lineptr, MAXNL, MAXLL)) >= 0){
-		myqsort((void **) lineptr, 0, nlines-1,
+		myqsort((void **) lineptr+pos, 0, (dur > 0 && dur < nlines-1) ? pos+dur : nlines-1,
 				(int (*)(void*,void*))(numflag ? numcmp : mystrcmp));
 		writelines(lineptr, nlines);
 		return 0;
@@ -65,7 +85,6 @@ void myqsort(void *v[], int left, int right,
 	myqsort(v, last+1, right, comp);
 }
 
-#include <stdlib.h>
 
 int numcmp(char *s1, char *s2)
 {
@@ -80,7 +99,6 @@ int numcmp(char *s1, char *s2)
 		return 0;
 }
 
-#include <ctype.h>
 int mystrcmp(char *s1, char *s2)
 {
 	int i, ns;
@@ -91,8 +109,7 @@ int mystrcmp(char *s1, char *s2)
 		ps = (ns == 2) ? s1 : s2;	
 		pbuf = (ns == 2) ? buf1 : buf2;
 		
-		i = 0;
-		while(*ps != '\0'){
+		for(i = 0; *ps != '\0'; i++){
 			if(foldflag && *ps >= 'A' && *ps <= 'Z')
 				*pbuf++ = *ps++ + ('a' - 'A'); 
 			else if(dirflag && !isdigit(*ps) && !isalpha(*ps) && !isblank(*ps))
