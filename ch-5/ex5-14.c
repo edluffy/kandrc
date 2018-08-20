@@ -23,40 +23,42 @@ int main(int argc, char *argv[])
 {
 	pos = numflag = revflag = foldflag = dirflag = 0;
 	dur = 0;
-
+	char bufn[999];
 	int nlines;
 	int nflag = argc;
-	char bufn[999];
-	int i = 0;
+	int i, j;
 
 	while(--nflag){
 		if(isdigit(*argv[nflag])){
-			//printf("%i", *argv[nflag] - '0');
-			while(isdigit(*argv[nflag]++))
-				bufn[i++] = *argv[nflag] - '0';
-			bufn[i] = '\0';
+			i = 0; // collect start pos	
+			for(j = 0; isdigit(argv[nflag][i]); i++, j++)
+				bufn[j] = argv[nflag][i];
+			bufn[j] = '\0';
 			pos = atoi(bufn);
-			if(*argv[nflag] == '-')
-				argv[nflag]++;
-			i = 0;
-			while(isdigit(*argv[nflag]++))
-				bufn[i++] = *argv[nflag] - '0';
-			bufn[i] = '\0';
+
+			if(argv[nflag][i] == '-')
+				i++;
+			// collect duration of sort
+			for(j = 0; isdigit(argv[nflag][i]); i++, j++)
+				bufn[j] = argv[nflag][i];
+			bufn[j] = '\0';
 			dur = atoi(bufn);
-			printf("%i", pos);			
+
+
+			printf("%i-%i\n", pos, dur);			
 		}
 		else if(strcmp(argv[nflag], "-n") == 0)
-			numflag = 1;
+			numflag = 1; // numerical sort
 		else if(strcmp(argv[nflag], "-r") == 0)
-			revflag = 1;
+			revflag = 1; // reverse sort order
 		else if(strcmp(argv[nflag], "-f") == 0)
-			foldflag = 1;
+			foldflag = 1; // fold upper and lower case
 		else if(strcmp(argv[nflag], "-d") == 0)
-			dirflag = 1;
+			dirflag = 1; // sort only letters, numbers and blanks
 	}	
 
 	if((nlines = sreadlines(lineptr, MAXNL, MAXLL)) >= 0){
-		myqsort((void **) lineptr+pos, 0, (dur > 0 && dur < nlines-1) ? pos+dur : nlines-1,
+		myqsort((void **) lineptr, pos, (dur > 0 && pos+dur < nlines-1) ? pos+dur : nlines-1,
 				(int (*)(void*,void*))(numflag ? numcmp : mystrcmp));
 		writelines(lineptr, nlines);
 		return 0;
@@ -66,6 +68,7 @@ int main(int argc, char *argv[])
 	}
 }
 
+/* c implementation of quicksort */
 void myqsort(void *v[], int left, int right,
 	int (*comp)(void*, void*))
 {
@@ -85,7 +88,7 @@ void myqsort(void *v[], int left, int right,
 	myqsort(v, last+1, right, comp);
 }
 
-
+/* compares value of two numbers, finds largest */
 int numcmp(char *s1, char *s2)
 {
 	double v1, v2;
@@ -98,7 +101,7 @@ int numcmp(char *s1, char *s2)
 	else
 		return 0;
 }
-
+/* compares two chars lexicographically, returns diff */
 int mystrcmp(char *s1, char *s2)
 {
 	int i, ns;
@@ -129,6 +132,7 @@ int mystrcmp(char *s1, char *s2)
 	return 0;
 }
 
+/* swaps location of i and j in array v */
 void swap(void *v[], int i, int j)
 {
 	void *temp;
@@ -137,6 +141,7 @@ void swap(void *v[], int i, int j)
 	v[j] = temp;
 }
 
+/* prints each line of a text array */
 void writelines(char *plar[], int nl)
 {
 	for(int i = 0; nl--; i++)
