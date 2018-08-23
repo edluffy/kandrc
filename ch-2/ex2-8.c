@@ -1,75 +1,64 @@
 #include <stdio.h>
 #include <limits.h>
-#include <stdlib.h>
 #define MAXINT (4*CHAR_BIT)
 
 /* write a function rightrot(x,n) */
-int readbits(char *s, int lim);
+int readbits(int lim);
+void writebits(int n, int lim);
 int rightrot(int x, int n);
-
-char *itobs(int n);
-int bstoi(char s[]);
 
 int main(void)
 {
-	char bitstr[MAXINT];
-	int bits;
+	int n, pos, res;
+	printf("Rotate by how many positions?: ");
+	//scanf("%i", &pos);
 
-//	printf("Enter a string of bits: ");
-//	scanf("%s", bitstr);
-	
-//	printf("As a number: %i\n", bits = bstoi(bitstr));
-	printf("Back as a string: %s\n", itobs(5));
-
+	pos = 3;
+	while((n = readbits(MAXINT+1)) > 0){
+		printf("Original bits: %i\n", n);
+		res = rightrot(pos, n);
+		writebits(res, MAXINT+1);
+	}
 
 }
 /* returns value of x rotated right by n bit positions  */
 int rightrot(int x, int n)
 {
-	int mask;	
+	return (x << n) | (x >> (MAXINT - n)) & ~(-1 << n);
 }
-
-#include <ctype.h>
-/* collects input as string of bits only */
-int readbits(char *s, int lim)
-{
-	int c, l;
-	for(l = 0; (c = getchar()) != EOF && c != '\n' && l < lim-1; l++)
-		if(c == '1' || c == '0') 
-			*s++ = c;	
-	*s = '\0';
-
-	return l;
-}
-
-#include <string.h>
 #include <math.h>
-/* converts integer to string of bits */
-char *itobs(int n)
+/* returns input bit string as an int */
+int readbits(int lim)
 {
-	int i = MAXINT;
-	char s[MAXINT+1];
-	s[MAXINT+1] = '\0';
-	for(i = MAXINT; i > 0; i--){
-		if(n-pow(2, i) > 0){
-			n -= pow(2, i);
-			s[i] = '1';
-		}else
-			s[i] = '0';
+	int c;
+	char s[lim], *ps = s;
+	
+	int len;
+	for(len = 0; (c = getchar()) != EOF && c != '\n' && len < lim-1; len++){
+		if(c != '1' && c != '0') break;	
+		*ps++ = c;
+	}
+	*ps-- = '\0';
+
+	int n, i;	
+	for(i = len, n = 0; i > 0; ps--, i--){
+		if(*ps == '1')
+			n += pow(2, len-i);
 	}
 
-	char *p = malloc(i*sizeof(char));
-	strcpy(p, s);
-	return p;
+	return n;
 }
 
-/* converts bit string to integer value */
-int bstoi(char s[])
+void writebits(int n, int lim)
 {
-	int i, n;
-	strrev(s);
-	for(i = n = 0; s[i] != '\0'; i++)
-		if(s[i] == '1') 
-			n += pow(2, i);
-	return n;
+	int i, state;
+	for(i = lim-1, state = 0; i >= 0; i--){
+		if((n-pow(2, i)) >= 0){
+			putchar('1');
+			n -= pow(2, i);
+			state = 1;
+		} else if(state)
+			putchar('0');
+	}
+	putchar('\n');
 }
