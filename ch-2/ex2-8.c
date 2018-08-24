@@ -16,7 +16,7 @@ int main(void)
 	pos = 3;
 	while((n = readbits(MAXINT+1)) > 0){
 		printf("Original bits: %i\n", n);
-		res = rightrot(pos, n);
+		res = rightrot(n, pos);
 		writebits(res, MAXINT+1);
 	}
 
@@ -52,6 +52,7 @@ int readbits(int lim)
 void writebits(int n, int lim)
 {
 	int i, state;
+	state = 1;
 	for(i = lim-1, state = 0; i >= 0; i--){
 		if((n-pow(2, i)) >= 0){
 			putchar('1');
