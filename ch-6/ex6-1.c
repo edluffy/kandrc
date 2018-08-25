@@ -1,4 +1,5 @@
 #include <stdio.h>
+#define MAXTEXT 999
 #define MAXWORD 100
 #define NKEYS (sizeof keytab / sizeof keytab[0])
 
@@ -19,7 +20,8 @@ struct key {
 	"while", 0
 };
 
-int readkw(char *w, int maxw);
+void getplain(char *ptext, int maxt);
+int readkw(char *text, char *w, int maxw);
 int bsearch(char *word, struct key tab[], int n);
 
 int main(void)
@@ -30,67 +32,73 @@ int main(void)
 	// binsearch function
 	
 	int n;
-	char word[MAXWORD];
-	while(readkw(word, MAXWORD) > 0){
+	char text[MAXTEXT], word[MAXWORD];
 
-		if(n = bsearch(word, keytab, NKEYS) >= 0)
+	getplain(text, MAXTEXT);
+
+	while(readkw(text, word, MAXWORD) > 0){
+		printf("|%s|", word);
+		if((n = bsearch(word, keytab, NKEYS)) >= 0)
 			keytab[n].count++;
 	}
 
-	for(n = 0; n > NKEYS; n++)
+	for(n = 0; n < NKEYS; n++)
 		printf("%s: %i\n", keytab[n].word, keytab[n].count);
 }
 
-#include <string.h>
 #include <ctype.h>
-#define MATCH(a, b) (strcmp(a, b) == 0)
-int readkw(char *word, int maxw)
+int pos;
+int readkw(char *text, char *word, int maxw)
 {
 	int c, i, getch(void);
 	void ungetch(int c);
 
-	int isplain, sqstate, dqstate, acstate, dcstate;
-	isplain = sqstate = dqstate = acstate = dcstate = 0;
-
-	char sym[maxw];
-
-	while(isspace(c = getch()))
-		;
-
-	i = 0;
-	if(!isalpha(c)){ // check if in plaintext state
-		while((c = getch()) != EOF && !isalpha(c) && i < maxw-1)
-			sym[i++] = c;
-		sym[i] = '\0';
-		ungetch(c);
-		
-		if(MATCH(word, "\""))
-			!dqstate;
-		else if(MATCH(sym, "'"))
-			!sqstate;
-		else if(MATCH(sym, "/*"))
-			acstate = 1;
-		else if(MATCH(sym, "/*"))
-			acstate = 0;
-		else if(MATCH(sym, "//"))
-			dcstate = 1;
-		else if(MATCH(sym, "\n"))
-			dcstate = 0;
-		
-		isplain = (!sqstate && !dqstate && !acstate && !dcstate) ? 1 : 0;
 	
-	} else if(isalnum(c) && isplain){
-		while((c = getch()) != EOF && isalnum(c) && i < maxw-1)
-			word[i++] = c;
-		word[i] = '\0';
-		ungetch(c);
+	while(text[pos] != '\0' && isblank(text[pos]))
+		pos++;
+	i = 0;
+	while(text[pos] != '\0' && i < maxw){
+		if(isblank(text[pos]) || text[pos] == '\n') continue;
+		word[i++] = text[pos++];
 	}
+	word[i] = '\0';
 
 	return i;
+}
 
+void getplain(char *ptext, int maxt)
+{
+	int plain, sqstate, dqstate, acstate, dcstate;
+	sqstate = dqstate = acstate = dcstate = 0;	
 
-
+	char text[maxt];
+	int c, i, j;
+	
+	for(i = 0; (c = getchar()) != EOF && i < maxt; i++)
+		text[i] = c;
+	text[i] == '\0';
 		
+	for(j = 0, plain = 1; j < i; j++){
+		// check if plaintext
+		if(text[j] == '/' && text[j+1] == '*')
+			acstate = 1;
+		else if(text[j-2] == '*' && text[j-1] == '/')
+			acstate = 0;
+		else if(text[j] == '/' && text[j+1] == '/')
+			dcstate = 1;
+		else if(text[j] == '\n')
+			dcstate = 0;
+		else if(text[j] == '"')
+			dqstate = !dqstate;
+		else if(text[j] == '\'')
+			sqstate = !sqstate;
+		plain = (acstate || dcstate || dqstate || sqstate) ? 0 : 1;
+
+		if(plain)
+			*ptext++ = text[j];
+	}
+	*ptext = '\0';
+
 }
 
 int bufc = EOF;
@@ -109,13 +117,12 @@ int getch(void)
 void ungetch(int c)
 {
 	if(bufc != EOF)
-		bufc = c;
-	else
 		printf("error: char buffer full");
-	
+	else
+		bufc = c;	
 }
 
-
+#include <string.h>
 int bsearch(char *word, struct key tab[], int n)
 {
 	int cond;
