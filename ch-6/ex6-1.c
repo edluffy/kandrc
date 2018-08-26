@@ -37,10 +37,11 @@ int main(void)
 	getplain(text, MAXTEXT);
 
 	while(readkw(text, word, MAXWORD) > 0){
-		printf("|%s|", word);
+//		printf("|%s|\n", word);
 		if((n = bsearch(word, keytab, NKEYS)) >= 0)
 			keytab[n].count++;
 	}
+
 
 	for(n = 0; n < NKEYS; n++)
 		printf("%s: %i\n", keytab[n].word, keytab[n].count);
@@ -50,16 +51,17 @@ int main(void)
 int pos;
 int readkw(char *text, char *word, int maxw)
 {
-	int c, i, getch(void);
-	void ungetch(int c);
-
+	int c, i;
 	
-	while(text[pos] != '\0' && isblank(text[pos]))
+	while(isblank(text[pos]))
 		pos++;
+	
 	i = 0;
-	while(text[pos] != '\0' && i < maxw){
-		if(isblank(text[pos]) || text[pos] == '\n') continue;
+	if(text[pos] != '\0' && !isalnum(text[pos]) && text[pos] != '_')
 		word[i++] = text[pos++];
+	else if(isalnum(text[pos]) || text[pos] == '_'){
+		while(isalnum(text[pos]) || text[pos] == '_' && i < maxw-1)
+				word[i++] = text[pos++];
 	}
 	word[i] = '\0';
 
@@ -68,8 +70,8 @@ int readkw(char *text, char *word, int maxw)
 
 void getplain(char *ptext, int maxt)
 {
-	int plain, sqstate, dqstate, acstate, dcstate;
-	sqstate = dqstate = acstate = dcstate = 0;	
+	int plain, ppstate, sqstate, dqstate, acstate, dcstate;
+	ppstate = sqstate = dqstate = acstate = dcstate = 0;	
 
 	char text[maxt];
 	int c, i, j;
@@ -86,13 +88,15 @@ void getplain(char *ptext, int maxt)
 			acstate = 0;
 		else if(text[j] == '/' && text[j+1] == '/')
 			dcstate = 1;
+		else if(text[j] == '#')
+			ppstate = 1;
 		else if(text[j] == '\n')
-			dcstate = 0;
+			dcstate = ppstate = 0;
 		else if(text[j] == '"')
 			dqstate = !dqstate;
 		else if(text[j] == '\'')
 			sqstate = !sqstate;
-		plain = (acstate || dcstate || dqstate || sqstate) ? 0 : 1;
+		plain = (acstate || dcstate || dqstate || sqstate || ppstate) ? 0 : 1;
 
 		if(plain)
 			*ptext++ = text[j];
