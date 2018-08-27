@@ -105,27 +105,6 @@ void getplain(char *ptext, int maxt)
 
 }
 
-int bufc = EOF;
-int getch(void)
-{
-	int c;
-	if(bufc != EOF){
-		c = bufc;
-		bufc = EOF;	
-	} else
-		c = getchar();
-	
-	return c;
-}
-
-void ungetch(int c)
-{
-	if(bufc != EOF)
-		printf("error: char buffer full");
-	else
-		bufc = c;	
-}
-
 #include <string.h>
 int bsearch(char *word, struct key tab[], int n)
 {
