@@ -2,7 +2,8 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
-#define MAXVAR 100
+#define MAXVAR 100 // max length of variable
+#define MAXVARN 1000 // max number of variables
 
 struct tnode {
 	char *vname;
@@ -11,6 +12,9 @@ struct tnode {
 	struct tnode *right;
 };
 
+char variables[MAXVARN][MAXVAR];
+
+int lsearch(char arr[][], int l, int r, char x[]);
 struct tnode *addtree(struct tnode *, char *);
 void treeprint(struct tnode *);
 int getvar(char *, int);
@@ -19,15 +23,27 @@ int main(void)
 {
 	struct tnode *root;
 	char vname[MAXVAR];
+	int varn = 0;
 
 	root = NULL;
 	while(getvar(vname, MAXVAR) != EOF){
-		if(isalpha(vname[0]))
+		if(isalpha(vname[0]) && lsearch(variables, 0, varn, vname)){
 			root = addtree(root, vname);
+			variables[varn++] = vname;
+		}
 	}
 	treeprint(root);
 	return 0;
 
+}
+
+int lsearch(char arr[][], int l, int r, char x[])
+{
+	for(int i = 0; l <= r; i++){
+		if(strcmp(arr[i], x)
+			return 1;
+	}
+	return -1;
 }
 
 int getvar(char *vname, int maxvr)
@@ -45,7 +61,7 @@ int getvar(char *vname, int maxvr)
 		return c;
 	}
 
-	for( ; --maxvr > - 0; v++){
+	for( ; --maxvr > 0; v++){
 		if(!isalnum(*v = getch())){
 			ungetch(*v);
 			break;
@@ -85,14 +101,14 @@ char *strdupe(char *);
 
 struct tnode *addtree(struct tnode *p, char *v)
 {
-	int cond = p->count;
+	int cond;
 	if(p == NULL){ // reached empty node
 		p = talloc();
 		p->vname = strdup(v);
 		p->count = 1;
 		p->left = p->right = NULL;
-	} else if(strcmp(v, p->vname) == 0) // var matches current node
-		p->count++;
+	} else if((cond = strcmp(v, p->vname)) == 0) // var matches current node
+		return p;
 	else if(cond < 0) // continue down left node
 		p->left = addtree(p->left, v);
 	else // continue down right node
