@@ -1,0 +1,2 @@
+This sentence will be converted to upper/lower case.
+THIS SENTENCE WILL BE CONVERTED TO UPPER/LOWER CASE.
