@@ -1,81 +1,57 @@
 #include <stdio.h>
 
-void printbasic(char *format, void *arg);
+void printnum(char *format, int arg);
 int main(void)
 {
 	// print arbitrary input in a sensible way
 	// handle dec, octal, hexdec, floats
 	// handle characters and break long text lines
 	
-	printbasic("this and that", "nothing");
+	printnum("%i", 123);
 }
 
 #include <stdlib.h>
-#define MAXN 99
-void printbasic(char *f, void *arg)
-{
-	int i;
-
-	i = 0;
-	while(f[i++] != '\0'){
-		
-		// conversion subroutine
-		if(f[i] == '%'){
-			fconv(f[i], *arg);
-		} else
-			putchar(f[i]);
-	}
-}
-
-#include <stdlib.h>
-#define MAX 99 // max length
+#include <ctype.h>
+#define MAXL 99 // max length
 
 /* formats conversion sequence into string */
-void printbasic(char *cs, void *arg)
+void printnum(char *cs, int arg)
 {
-	int nbuf[MAXl], sbuf[MAXL] *stt, fleft, fwidth, fprec;
-
-
+	int nbuf[MAXL], *nbufp = nbuf, base;
+	char sbuf[MAXL], *sbufp = sbuf;
+	
 	// conversion subroutine
-	fleft = fwidth = fprec = 0;
 	for( ; *cs != '\0'; cs++){
 		if(*cs == '%'){
-			
-			break;
-		} else if(*cs == '-'){ // left adjustment
-			fleft = 1;
-		} else if(isdigit(*cs)){ // min field width
-			for(stt = nbuf; isdigit(*cs); cs++, nbuf++)
-				*nbuf = *cs;
-			*nbuf = '\0';
-			fwidth = atoi(stt);
-		} else if(*cs == '.'){ // precision
-			for(cs++, stt = nbuf; isdigit(*s); cs++, nbuf++)
-				*nbuf = *cs;
-			*nbuf = '\0';
-			fprec = atoi(stt);
-		}else if(isalpha(*cs)){ // format
-			switch(*cs)
-			{
-				case 'd':
-				case 'i':
-					itoa(arg, *sbuf);
-					break;
-				case 'o':
-					otoa(arg, *sbuf);
-					break;
-				case 'x':
-				case 'X':
-					htoa(arg, *sbuf);
-					break;
-				default: 
-					printf("unknown conversion char: %c\n", *cs);
-					break;
-			}
+			switch(*++cs)
+				{
+					case 'd':
+					case 'i':
+						base = 10;
+						break;
+					case 'o':
+						base = 18;
+						break;
+					case 'x':
+					case 'X':
+						base = 16;
+						break;
+					case 'b':
+						base = 2;
+						break;
+					default:
+						base = 10;
+						printf("unknown conversion char: %c\n", *cs);
+						break;
+				}
 			break;	
 		}else
 			printf("unknown conversion sequence: %c\n", *cs);
 	}
+
+	itoa(arg, sbuf, base);
+	for( ; *sbufp != '\0'; sbufp++)
+		putchar(*sbufp);
 
 
 }
